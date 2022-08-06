@@ -1,0 +1,6 @@
+WindowHeight=720
+WindowWidth=1080
+CharacterSizeX=80
+CharacterSizeY=80
+CharacterAcelerationX=1.5
+CharacterAcelerationY=1
