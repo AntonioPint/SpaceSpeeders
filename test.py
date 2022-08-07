@@ -1,3 +1,9 @@
-from OptionsReader import OptionsReader
+from screens.ScreenManager import ScreenManager
 
-print(OptionsReader().getValue("WindowWidth"))
+a = ScreenManager()
+b = ScreenManager()
+
+a.screen = 2
+
+a.changeToExitScreen()
+print(b.screen)

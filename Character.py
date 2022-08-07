@@ -22,22 +22,21 @@ class Character(GameObject):
         def Up():
             self.position = self.position - Vector2(0, self.ACELY)
         self.move(Up)
-        # print("↑")
 
     def moveDown(self):
         def Down():
             self.position = self.position + Vector2(0, self.ACELY)
         self.move(Down)
-        # print("↓")
 
     def moveLeft(self):
         def Left():
             self.position = self.position - Vector2(self.ACELX, 0)
         self.move(Left)
-        # print("←")
 
     def moveRight(self):
         def Right():
             self.position = self.position + Vector2(self.ACELX, 0)
         self.move(Right)
-        # print("→")
+
+    def fire(self):
+        pass

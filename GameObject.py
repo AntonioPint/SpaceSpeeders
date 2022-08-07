@@ -19,6 +19,9 @@ class GameObject(object):
         if(self.isOutOfBounds()):
             self.position = previousPosition
 
-
     def getCharacterPos(self):
         return self.position - Vector2(self.width/2,self.height/2)
+
+    def colisions(self, gameObjectToVeryfy):
+        pass
+        #return [gameObjectToVeryfy]

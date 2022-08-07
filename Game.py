@@ -1,53 +1,74 @@
 # imports
+from queue import Empty
 import pygame
-from Character import Character
-from Singleton import SingletonMeta
- # Necessary to not have circular imports
+from OptionsReader import OptionsReader
+from screens.ScreenManager import ScreenManager
 
-class Game(metaclass=SingletonMeta):
+class Game():
     #ScreenVariables
-    _screenHeight = 720
-    _screenWidth = 1080
+    _screenHeight = int(OptionsReader().getValue("WindowHeight"))
+    _screenWidth = int(OptionsReader().getValue("WindowWidth"))
     _backgroundColor = (255,255,255)
 
     #GlobalVariables
-    myCharacter = Character(_screenWidth/2,_screenHeight/2)
-    myCharacterActions = {
-        pygame.K_UP : myCharacter.moveUp,
-        pygame.K_DOWN : myCharacter.moveDown,
-        pygame.K_LEFT : myCharacter.moveLeft,
-        pygame.K_RIGHT : myCharacter.moveRight      
-    }
+    KeyHoldInputs=[
+        pygame.K_UP, pygame.K_w,
+        pygame.K_DOWN, pygame.K_s,
+        pygame.K_LEFT, pygame.K_a,
+        pygame.K_RIGHT, pygame.K_d,
+        pygame.K_SPACE, pygame.K_ESCAPE
+    ]
+
+    KeyPressedInputs=[
+        pygame.K_ESCAPE
+    ]
 
     #PyGame
     pygame.init()
-    pygame.key.set_repeat() #Be able to see hold down keys
     clock = pygame.time.Clock()
-    display = pygame.display.set_mode([_screenWidth, _screenHeight])
+    display = pygame.display.set_mode([_screenWidth, _screenHeight]) #, pygame.NOFRAME
+    screen = ScreenManager.screen(display)
 
     def __init__(self):
         pass
 
     def start(self):
         pygame.display.set_caption('SpaceSpeeders')
+        
         while True:
-            for event in pygame.event.get():
+            keys = {"hold": [], "pressed": []}
+            hold = pygame.key.get_pressed()
+            pressed = pygame.event.get()
+
+            #Gets Pressed Keys
+            for event in pressed:
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    return
+                elif event.type == pygame.KEYDOWN:
+                    #print("Pressed " + pygame.key.name(event.key))
+                    keys["pressed"].append(event.key)
 
-            pressed = pygame.key.get_pressed()
+            #Gets Holded Keys
+            for key in self.KeyHoldInputs:
+                if hold[key]:
+                    #print("Holded " + pygame.key.name(key))
+                    keys["hold"].append(key)
 
-            for func in (self.myCharacterActions[key] for key in self.myCharacterActions if pressed[key]):
-                func()
-                
-            self.display.fill(self._backgroundColor)
-            # Draw a solid blue circle in the center
-            pygame.draw.circle(self.display, (255,140,0), (250, 250), 75)
-            pygame.draw.circle(self.display, (255,255,0), (250, 250), 65)
-            self.display.blit(self.myCharacter.getCharacterImage(),self.myCharacter.getCharacterPos())
+            # Remove duplicates
+            for key in keys["hold"]:
+                if key in keys["pressed"]: keys["pressed"].remove(key)
             
+            # if there is next Screen
+            nextScreen = self.screen.execute(keys)
+            if(nextScreen is not None):
+                self.screen = nextScreen(self.display)
+ 
             pygame.display.flip()
-            # self.clock.tick(30)
+            self.clock.tick(int(OptionsReader().getValue("TargetFPS")))
+            
+            print(f"FPS:", int(self.clock.get_fps()),end="\r") if int(OptionsReader().getValue("ShowFPS")) else None
+
+    def ChangeScreen():
+        pass
 
 Game().start()
