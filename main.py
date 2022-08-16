@@ -31,7 +31,6 @@ def main():
     pygame.display.set_caption('SpaceSpeeders')
 
     while True:
-
         inputs = {"hold": [], "pressed": [],
                     "released": [], "mousePos": ()}
 

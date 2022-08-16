@@ -6,8 +6,7 @@ import pygame
 
 
 class GameScreen(Screen):
-    # lastMousePosition = (int(OptionsReader().getValue("CrossHairSize")), int(
-    #     OptionsReader().getValue("CrossHairSize")))
+
     lastMousePosition = (0, 0)
     WallpaperDimensions = (int(OptionsReader().getValue("WindowWidth")),
                            int(OptionsReader().getValue("WindowHeight")))
@@ -56,20 +55,15 @@ class GameScreen(Screen):
         pygame.mouse.set_visible(False)
 
         if mousePosition != ():
-            self.lastMousePosition = self.crossHairPositionOffset(
-                mousePosition)
-
-        # Point Character to cursor
-        # self.myCharacter.pointToPosition(self.lastMousePosition)
+            self.lastMousePosition = mousePosition
 
         # Draw character
-        print(self.myCharacter.getCenterPosition())
-        self.display.blit(self.myCharacter.getCharacterPointingToPosition(self.lastMousePosition),
-                          self.myCharacter.center
-                          )
-
+        self.display.blit(
+            self.myCharacter.getCharacterPointingToPosition(self.lastMousePosition),
+            self.myCharacter.center
+        )
         # Draw Cursor
-        self.display.blit(self.ChrossHair, self.lastMousePosition)
+        self.display.blit(self.ChrossHair, self.crossHairPositionOffset(self.lastMousePosition))
 
     def crossHairPositionOffset(self, pos):
         return (pos[0]-int(OptionsReader().getValue("CrossHairSize"))/2, pos[1]-int(OptionsReader().getValue("CrossHairSize"))/2)

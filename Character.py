@@ -6,10 +6,11 @@ from OptionsReader import OptionsReader
 
 class Character(GameObject):
     # Constants
-    ACELX = float(OptionsReader().getValue("CharacterAcelerationX"))
-    ACELY = float(OptionsReader().getValue("CharacterAcelerationY"))
+    ACELX = 6
+    ACELY = 4
 
     image = pygame.image.load("assets\spaceship.png")
+    characterImage = None
 
     def __init__(self, position):
         super().__init__(
@@ -17,9 +18,10 @@ class Character(GameObject):
             int(OptionsReader().getValue("CharacterSizeY")),
             position
         )
+        self.characterImage = pygame.transform.scale(self.image, (self.width, self.height))
 
     def getCharacterImage(self):
-        return pygame.transform.scale(self.image, (self.width, self.height))
+        return self.characterImage
 
     def moveUp(self, args):
         def Up():
@@ -50,12 +52,15 @@ class Character(GameObject):
     def fire(self, args):
         print("fire")
 
+    def getCenterRotate(self):
+        return self.getPosition() + pygame.Vector2(30,30)
+
     def getCharacterPointingToPosition(self, targetPosition):
         (x, y) = self.getPosition()
         (targetX, targetY) = targetPosition
 
-        angle = 360-math.atan2(targetY-y,targetX-x)*180/math.pi -90
+        angle = 270-math.atan2(targetY-y,targetX-x)*180/math.pi 
         result = pygame.transform.rotate(self.getCharacterImage(), angle)
-        self.center = result.get_rect(center=self.position)
-
+        self.center = result.get_rect(center=self.getPosition())
+        #FIXME:
         return result
