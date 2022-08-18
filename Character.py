@@ -1,15 +1,12 @@
 import pygame
-import math
-from GameObject import GameObject
+
+from GameObject import GameObject, GameObjectTypes
 from OptionsReader import OptionsReader
 
 
 class Character(GameObject):
-    # Constants
-    ACELX = 6
-    ACELY = 4
-
-    image = pygame.image.load("assets\spaceship.png")
+    
+    image = pygame.image.load("assets/spaceship.png")
     characterImage = None
 
     def __init__(self, position):
@@ -19,48 +16,23 @@ class Character(GameObject):
             position
         )
         self.characterImage = pygame.transform.scale(self.image, (self.width, self.height))
+        self.objectType = GameObjectTypes.CHARACTER
+        self.ACEL = 5
 
     def getCharacterImage(self):
         return self.characterImage
 
-    def moveUp(self, args):
-        def Up():
-            self.position = self.position - pygame.Vector2(0, self.ACELY)
-        self.move(Up)
+    def moveUp(self):
+        self.movement += pygame.Vector2(0, -1)
 
-    def moveDown(self, args):
-        def Down():
-            self.position = self.position + pygame.Vector2(0, self.ACELY)
-        self.move(Down)
+    def moveDown(self):
+        self.movement += pygame.Vector2(0, 1)
 
-    def moveLeft(self, args):
-        def Left():
-            self.position = self.position - pygame.Vector2(self.ACELX, 0)
-        self.move(Left)
-        #self.image = pygame.image.load("assets\spaceshipLeft.png")
+    def moveLeft(self):
+        self.movement += pygame.Vector2(-1, 0)
 
-    def moveRight(self, args):
-        def Right():
-            self.position = self.position + pygame.Vector2(self.ACELX, 0)
-        self.move(Right)
-        #self.image = pygame.image.load("assets\spaceshipRight.png")
+    def moveRight(self):
+        self.movement += pygame.Vector2(1, 0)
 
-    def reset(self, args):
-        pass
-        #self.image = pygame.image.load("assets\spaceship.png")
-
-    def fire(self, args):
+    def fire(self):
         print("fire")
-
-    def getCenterRotate(self):
-        return self.getPosition() + pygame.Vector2(30,30)
-
-    def getCharacterPointingToPosition(self, targetPosition):
-        (x, y) = self.getPosition()
-        (targetX, targetY) = targetPosition
-
-        angle = 270-math.atan2(targetY-y,targetX-x)*180/math.pi 
-        result = pygame.transform.rotate(self.getCharacterImage(), angle)
-        self.center = result.get_rect(center=self.getPosition())
-        #FIXME:
-        return result

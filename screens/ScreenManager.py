@@ -4,20 +4,22 @@ import pygame
 
 class ScreenManager(metaclass=SingletonMeta):
     #Inicial Screen
-    screen = ScreensEnum.GameScreen.value
+    screen = ScreensEnum.StartScreen.value
 
-    
     def getScreen(self): 
         return self.screen
     
     def changeToStartScreen(self):
         self.screen = ScreensEnum.StartScreen.value
+        return self.getScreen()
 
     def changeToGameScreen(self):
         self.screen = ScreensEnum.GameScreen.value
+        return self.getScreen()
 
-    def changeToExitScreen(self):
-        self.screen = ScreensEnum.ExitScreen.value
+    def changeToPauseScreen(self):
+        self.screen = ScreensEnum.PauseScreen.value
+        return self.getScreen()
 
     def exitApp(self):
         print("Exiting...")

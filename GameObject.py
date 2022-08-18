@@ -1,7 +1,12 @@
-from pygame import Vector2
+import math
+from enum import Enum
+from pygame import Vector2, transform
 from OptionsReader import OptionsReader
 
 class GameObject(object):
+    ACEL = 1
+    objectType = None
+    movement = Vector2(0,0)
 
     def __init__(self,width,height,position):
         self.width = width
@@ -18,17 +23,41 @@ class GameObject(object):
         isOutScreenY = (self.position + Vector2(0, self.height/2)).y < 0  or (self.position - Vector2(0, self.height/2)).y > int(OptionsReader().getValue("WindowHeight"))
         return isOutScreenX or isOutScreenY
 
-    def move(self,func):
-        previousPosition = self.position
-        func()
-        #TODO: remove Move method
-        if(self.isOutOfBounds()):
-            print("OUT!!")
-            self.position = previousPosition
+    def move(self):
+        if self.movement == Vector2(0,0)  : return
+
+        self.position += self.movement.normalize() * self.ACEL
+
+        match self.objectType:
+            case GameObjectTypes.CHARACTER:
+                if(self.isOutOfBounds()):
+                    self.position -= self.movement.normalize() * self.ACEL
+            case _:
+                pass
+
+        self.movement = Vector2(0,0)       
 
     def getPosition(self):
         return self.position
 
-    def colidingObjects(self, gameObjectToVerify):
+    def areColliding(self, object1, object2):
+        return False
+
+    def collidingObjects(self, gameObjectToVerify):
         pass
-        #return [gameObjectToVerify]
+    
+    def getObjectPointingToPosition(self, targetPosition):
+
+        (x, y) = self.getPosition()
+        (targetX, targetY) = targetPosition
+
+        angle = 270-math.atan2(targetY-y,targetX-x)*180/math.pi 
+        result = transform.rotate(self.getCharacterImage(), angle)
+        self.center = result.get_rect(center=self.getPosition())
+
+        return result   
+
+class GameObjectTypes(Enum):
+    CHARACTER="CHARACTER"
+    ENEMY="ENEMY"
+    SHOT="SHOT"

@@ -7,69 +7,56 @@ import pygame
 
 class GameScreen(Screen):
 
-    lastMousePosition = (0, 0)
-    WallpaperDimensions = (int(OptionsReader().getValue("WindowWidth")),
-                           int(OptionsReader().getValue("WindowHeight")))
+    WallpaperImage = pygame.image.load("assets/wallpaper.png")
+    ChrossHairImage = pygame.image.load("assets/crosshair.png")
 
     myCharacter = Character(
         (int(OptionsReader().getValue("WindowWidth"))/2,
          int(OptionsReader().getValue("WindowHeight"))/2)
     )
-
+    
     ChrossHair = pygame.transform.scale(
         pygame.image.load("assets/crosshair.png"),
         (int(OptionsReader().getValue("CrossHairSize")), int(OptionsReader().getValue("CrossHairSize"))))
 
+    lastMousePosition = (0,0)
+
     def __init__(self, display):
         super().__init__(display)
+
+        # CrossHair
+        pygame.mouse.set_visible(False)
 
     def execute(self, input):
         # Mouse Input
         mousePosition = input["mousePos"]
 
-        # Execute Keyboard Inputs
-        for i in input["pressed"]:
-            if self.myPressedActions.get(i) is not None:
-                a = self.myPressedActions.get(i)(i)
-                if a is not None:
-                    return a
-
-        for f in input["hold"]:
-            if self.myHoldActions.get(f) is not None:
-                a = self.myHoldActions.get(f)(f)
-                if a is not None:
-                    return a
-
-        for g in input["released"]:
-            if self.myReleasedActions.get(g) is not None:
-                a = self.myReleasedActions.get(g)(g)
-                if a is not None:
-                    return a
+        self.executeInputs(input)
 
         # Walpaper
-        Wallpaper = pygame.transform.scale(pygame.image.load(
-            "assets/wallpaper1.png"), self.WallpaperDimensions)
+        Wallpaper = pygame.transform.scale(self.WallpaperImage, self.WindowDimensions)
         self.display.blit(Wallpaper, (0, 0))
-
-        # CrossHair
-        pygame.mouse.set_visible(False)
 
         if mousePosition != ():
             self.lastMousePosition = mousePosition
 
         # Draw character
+        self.myCharacter.move() # First move character
+        
         self.display.blit(
-            self.myCharacter.getCharacterPointingToPosition(self.lastMousePosition),
+            self.myCharacter.getObjectPointingToPosition(self.lastMousePosition),
             self.myCharacter.center
-        )
+        ) 
+
         # Draw Cursor
         self.display.blit(self.ChrossHair, self.crossHairPositionOffset(self.lastMousePosition))
+
 
     def crossHairPositionOffset(self, pos):
         return (pos[0]-int(OptionsReader().getValue("CrossHairSize"))/2, pos[1]-int(OptionsReader().getValue("CrossHairSize"))/2)
 
-    def exitGame(args):
-        return screens.ScreenManager.ScreenManager().changeToExitScreen()
+    def exitGame():
+        return screens.ScreenManager.ScreenManager().changeToPauseScreen()
 
     myHoldActions = {
         pygame.K_UP: myCharacter.moveUp, pygame.K_w: myCharacter.moveUp,
@@ -84,6 +71,5 @@ class GameScreen(Screen):
     }
 
     myReleasedActions = {
-        pygame.K_LEFT: myCharacter.reset, pygame.K_RIGHT: myCharacter.reset,
-        pygame.K_a: myCharacter.reset, pygame.K_d: myCharacter.reset
+
     }

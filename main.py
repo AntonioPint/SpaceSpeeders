@@ -56,24 +56,29 @@ def main():
         # Gets Holded inputs
         for key in KeyInputs:
             if hold[key]:
-                if(not inputs["pressed"].__contains__(key) and not inputs["released"].__contains__(key)):
+                if(not inputs["pressed"].__contains__(key) and 
+                    not inputs["released"].__contains__(key)):
                     #print("Holded ", pygame.key.name(key))
                     inputs["hold"].append(key)
-
 
         if ScreenManager().getScreen() != screen:
             screen = ScreenManager().getScreen()
             screenDisplayed = screen(display)
 
         screenDisplayed.execute(inputs)
-
-        pygame.display.update()
-        #pygame.display.flip()
         
         clock.tick(int(OptionsReader().getValue("TargetFPS")))
 
-        print(f"FPS:", int(clock.get_fps()), end="\r") if int(
-            OptionsReader().getValue("ShowFPS")) else None
+        if int( OptionsReader().getValue("ShowFPS")):
+            fpsText = pygame.font.Font('freesansbold.ttf', 22).render(str(int(clock.get_fps())), True, (0, 255, 0), (0, 0, 0, 0))
+            textRect = fpsText.get_rect()
+            textRect.right = _screenWidth
+            display.blit(fpsText,textRect)
+            #print(f"FPS:", int(clock.get_fps()), end="\r")
+
+        pygame.display.update()
+        #pygame.display.flip()
+
 
 if __name__ == '__main__':
     main()

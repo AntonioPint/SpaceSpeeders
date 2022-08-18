@@ -4,4 +4,4 @@ CharacterSizeX=80
 CharacterSizeY=80
 CrossHairSize=50
 TargetFPS=60
-ShowFPS=0
+ShowFPS=1
