@@ -1,6 +1,8 @@
+from GameObject import GameObject
 from OptionsReader import OptionsReader
 from Character import Character
 from screens.Screen import Screen
+import Shot
 import screens.ScreenManager
 import pygame
 
@@ -14,12 +16,13 @@ class GameScreen(Screen):
         (int(OptionsReader().getValue("WindowWidth"))/2,
          int(OptionsReader().getValue("WindowHeight"))/2)
     )
-    
-    ChrossHair = pygame.transform.scale(
-        pygame.image.load("assets/crosshair.png"),
-        (int(OptionsReader().getValue("CrossHairSize")), int(OptionsReader().getValue("CrossHairSize"))))
 
-    lastMousePosition = (0,0)
+    ChrossHairSize = (50, 50)
+
+    ChrossHair = pygame.transform.scale(
+        pygame.image.load("assets/crosshair.png"), ChrossHairSize)
+
+    lastMousePosition = (0, 0)
 
     def __init__(self, display):
         super().__init__(display)
@@ -31,29 +34,42 @@ class GameScreen(Screen):
         # Mouse Input
         mousePosition = input["mousePos"]
 
-        self.executeInputs(input)
+        self.executeInputs(self,input)
 
         # Walpaper
-        Wallpaper = pygame.transform.scale(self.WallpaperImage, self.WindowDimensions)
+        Wallpaper = pygame.transform.scale(
+            self.WallpaperImage, self.WindowDimensions)
         self.display.blit(Wallpaper, (0, 0))
 
         if mousePosition != ():
             self.lastMousePosition = mousePosition
 
         # Draw character
-        self.myCharacter.move() # First move character
-        
+        self.myCharacter.move()  # First move character
+        self.myCharacter.setChrosshairPosition(self.lastMousePosition)
+
         self.display.blit(
-            self.myCharacter.getObjectPointingToPosition(self.lastMousePosition),
+            self.myCharacter.getObjectPointingToPosition(
+                self.lastMousePosition),
             self.myCharacter.center
-        ) 
+        )
 
         # Draw Cursor
-        self.display.blit(self.ChrossHair, self.crossHairPositionOffset(self.lastMousePosition))
+        self.display.blit(
+            self.ChrossHair, self.crossHairPositionOffset(self.lastMousePosition))
 
+        # Draw Shots
+        nextShots = []
+        for shot in self.myCharacter.Shots:
+            shot.move()
+            self.display.blit(shot.getImage(), shot.getPosition())
+            if(not shot.isOffScreen()):
+                nextShots.append(shot)
+
+        self.myCharacter.Shots = nextShots
 
     def crossHairPositionOffset(self, pos):
-        return (pos[0]-int(OptionsReader().getValue("CrossHairSize"))/2, pos[1]-int(OptionsReader().getValue("CrossHairSize"))/2)
+        return (pos[0]-self.ChrossHairSize[0]/2, pos[1]-self.ChrossHairSize[1]/2)
 
     def exitGame():
         return screens.ScreenManager.ScreenManager().changeToPauseScreen()
@@ -71,5 +87,4 @@ class GameScreen(Screen):
     }
 
     myReleasedActions = {
-
     }

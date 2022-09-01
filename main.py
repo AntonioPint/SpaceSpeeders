@@ -41,7 +41,7 @@ def main():
         for event in pressed:
             inputs["mousePos"] = pygame.mouse.get_pos()
             if event.type == pygame.QUIT:
-                pygame.quit()
+                #pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 #print("Pressed ", pygame.key.name(event.key))

@@ -21,7 +21,7 @@ class StartScreen(Screen):
 
     def execute(self, input):
         
-        self.executeInputs(input)
+        self.executeInputs(self,input)
 
         # Draw GIF
         self.display.blit(pygame.transform.scale(self.backgrounfGif[self.activeBackgroundIndex],self.WindowDimensions),(0,0))

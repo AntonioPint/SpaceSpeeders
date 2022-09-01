@@ -13,25 +13,25 @@ class Screen(object):
     def execute(self, input):
         return None
 
-    def executeInputs(self, input):
+    def executeInputs(self, selfRef, input):
         # Execute Keyboard Inputs
         for i in input["pressed"]:
-            if self.myPressedActions.get(i) is not None:
-                a = self.myPressedActions.get(i)()
-                if a is not None:
-                    return a
+            self.executeInputsAux(self.myPressedActions.get(i), selfRef)
 
         for f in input["hold"]:
-            if self.myHoldActions.get(f) is not None:
-                a = self.myHoldActions.get(f)()
-                if a is not None:
-                    return a
+            self.executeInputsAux(self.myHoldActions.get(f), selfRef)
 
         for g in input["released"]:
-            if self.myReleasedActions.get(g) is not None:
-                a = self.myReleasedActions.get(g)()
-                if a is not None:
-                    return a
+            self.executeInputsAux(self.myReleasedActions.get(g), selfRef)
+
+    def executeInputsAux(self, function, args):
+        if function is not None:
+            try:
+                funcResult = function(args)
+                return funcResult if funcResult is not None else None
+            except:
+                funcResult = function()
+                return funcResult if funcResult is not None else None
 
     myHoldActions = {}
     myPressedActions = {}

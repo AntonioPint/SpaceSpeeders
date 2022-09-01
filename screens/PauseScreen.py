@@ -8,17 +8,17 @@ import pygame
 
 class PauseScreen(Screen):
     display = None
+    mousePosition = (0,0)
 
     def __init__(self, display):
         super().__init__(display)
-        self.resumeButton = Button("RESUME", (self.WindowDimensions[0]/2,self.WindowDimensions[1]*2/3),30,"black","red", screens.ScreenManager.ScreenManager().exitApp)
-        self.buttons = [self.resumeButton]
+        self.resumeButton = Button("EXIT", (self.WindowDimensions[0]/2,self.WindowDimensions[1]*2/3),30,"black","red", screens.ScreenManager.ScreenManager().exitApp)
 
     def execute(self, input):
         # Mouse Input
-        mousePosition = input["mousePos"]
+        self.mousePosition = input["mousePos"]
 
-        self.executeInputs(input)
+        self.executeInputs(self, input)
 
         # Background      
         self.display.fill((0, 0, 0))
@@ -30,15 +30,15 @@ class PauseScreen(Screen):
         return None
 
 
-    def backToGame():
-        return screens.ScreenManager.ScreenManager().changeToGameScreen()
+    def backToGame(self):
+        screens.ScreenManager.ScreenManager().changeToGameScreen()
 
-    def checkButtonClicked(self):
-        print("I clicked")
+    def checkMouseClick(self):
+        if(self.resumeButton.isColliding(self.mousePosition)):
+            screens.ScreenManager.ScreenManager().exitApp()
 
-        pass
 
     myPressedActions = {
         pygame.K_ESCAPE : backToGame,
-        pygame.MOUSEBUTTONDOWN : checkButtonClicked
+        pygame.MOUSEBUTTONDOWN : checkMouseClick
     }

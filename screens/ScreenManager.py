@@ -1,3 +1,4 @@
+import sys
 from screens.ScreensEnum import ScreensEnum
 from Singleton import SingletonMeta 
 import pygame 
@@ -23,4 +24,5 @@ class ScreenManager(metaclass=SingletonMeta):
 
     def exitApp(self):
         print("Exiting...")
-        pygame.quit()
+        sys.exit()
+        #pygame.quit()

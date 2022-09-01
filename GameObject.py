@@ -24,7 +24,7 @@ class GameObject(object):
         return isOutScreenX or isOutScreenY
 
     def move(self):
-        if self.movement == Vector2(0,0)  : return
+        if self.movement == Vector2(0,0) : return
 
         self.position += self.movement.normalize() * self.ACEL
 
@@ -32,10 +32,10 @@ class GameObject(object):
             case GameObjectTypes.CHARACTER:
                 if(self.isOutOfBounds()):
                     self.position -= self.movement.normalize() * self.ACEL
+                self.movement = Vector2(0,0)   
             case _:
                 pass
-
-        self.movement = Vector2(0,0)       
+        
 
     def getPosition(self):
         return self.position
@@ -45,14 +45,16 @@ class GameObject(object):
 
     def collidingObjects(self, gameObjectToVerify):
         pass
-    
-    def getObjectPointingToPosition(self, targetPosition):
 
+    def getImage(self):
+        pass
+
+    def getObjectPointingToPosition(self, targetPosition):
         (x, y) = self.getPosition()
         (targetX, targetY) = targetPosition
 
-        angle = 270-math.atan2(targetY-y,targetX-x)*180/math.pi 
-        result = transform.rotate(self.getCharacterImage(), angle)
+        angle = -math.atan2(targetY-y,targetX-x)*180/math.pi 
+        result = transform.rotate(self.getImage(), angle)
         self.center = result.get_rect(center=self.getPosition())
 
         return result   
