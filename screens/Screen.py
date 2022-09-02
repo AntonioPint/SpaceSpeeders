@@ -1,11 +1,16 @@
 from OptionsReader import OptionsReader
+from functools import partial
 
 
 class Screen(object):
     display = None
-    
+
     WindowDimensions = (int(OptionsReader().getValue("WindowWidth")),
-                           int(OptionsReader().getValue("WindowHeight")))
+                        int(OptionsReader().getValue("WindowHeight")))
+
+    holdActions = {}
+    pressedActions = {}
+    releasedActions = {}
 
     def __init__(self, display):
         self.display = display
@@ -13,26 +18,27 @@ class Screen(object):
     def execute(self, input):
         return None
 
-    def executeInputs(self, selfRef, input):
+    def executeInputs(self, input):
         # Execute Keyboard Inputs
         for i in input["pressed"]:
-            self.executeInputsAux(self.myPressedActions.get(i), selfRef)
+            if self.pressedActions.get(i) is not None:
+                self.executeInputsAux(self.pressedActions.get(
+                    i)[0], self.pressedActions.get(i)[1])
 
         for f in input["hold"]:
-            self.executeInputsAux(self.myHoldActions.get(f), selfRef)
+            if self.holdActions.get(f) is not None:
+                self.executeInputsAux(self.holdActions.get(
+                    f)[0], self.holdActions.get(f)[1])
 
         for g in input["released"]:
-            self.executeInputsAux(self.myReleasedActions.get(g), selfRef)
+            if self.releasedActions.get(g) is not None:
+                self.executeInputsAux(self.releasedActions.get(
+                    g)[0], self.releasedActions.get(g)[1])
 
-    def executeInputsAux(self, function, args):
-        if function is not None:
-            try:
-                funcResult = function(args)
-                return funcResult if funcResult is not None else None
-            except:
-                funcResult = function()
-                return funcResult if funcResult is not None else None
-
-    myHoldActions = {}
-    myPressedActions = {}
-    myReleasedActions = {}
+    def executeInputsAux(self,function, args):
+        try:
+            funcResult = function(*args)
+            return funcResult if funcResult is not None else None
+        except:
+            funcResult = function()
+            return funcResult if funcResult is not None else None

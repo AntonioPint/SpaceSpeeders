@@ -18,8 +18,9 @@ class PauseScreen(Screen):
         # Mouse Input
         self.mousePosition = input["mousePos"]
 
-        self.executeInputs(self, input)
-
+        self.definePressedActions()
+        self.executeInputs(input)
+        
         # Background      
         self.display.fill((0, 0, 0))
         
@@ -37,8 +38,10 @@ class PauseScreen(Screen):
         if(self.resumeButton.isColliding(self.mousePosition)):
             screens.ScreenManager.ScreenManager().exitApp()
 
+    pressedActions = {}
 
-    myPressedActions = {
-        pygame.K_ESCAPE : backToGame,
-        pygame.MOUSEBUTTONDOWN : checkMouseClick
-    }
+    def definePressedActions(self):
+        self.pressedActions = {
+            pygame.K_ESCAPE : (self.backToGame,[],{}),
+            pygame.MOUSEBUTTONDOWN : (self.checkMouseClick,[],{})
+        }

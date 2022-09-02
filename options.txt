@@ -1,5 +1,4 @@
 WindowHeight=720
 WindowWidth=1080
-CrossHairSize=50
 TargetFPS=60
 ShowFPS=1

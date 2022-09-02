@@ -3,10 +3,11 @@ from screens.Screen import Screen
 import screens.ScreenManager
 import pygame
 
+
 class StartScreen(Screen):
     display = None
     backgrounfGif = []
-    activeBackgroundIndex=0
+    activeBackgroundIndex = 0
     frame = 0
 
     def __init__(self, display):
@@ -15,16 +16,17 @@ class StartScreen(Screen):
         self.logo = pygame.image.load("assets/logo.png")
         self.startInstructions = pygame.image.load("assets/start.png")
 
-        for i in range(0,6):
-            self.backgrounfGif.append(pygame.image.load(f"assets/intro/{i}.png"))
-
+        for i in range(0, 6):
+            self.backgrounfGif.append(
+                pygame.image.load(f"assets/intro/{i}.png"))
 
     def execute(self, input):
-        
-        self.executeInputs(self,input)
+        self.definePressedActions()
+        self.executeInputs(input)
 
         # Draw GIF
-        self.display.blit(pygame.transform.scale(self.backgrounfGif[self.activeBackgroundIndex],self.WindowDimensions),(0,0))
+        self.display.blit(pygame.transform.scale(
+            self.backgrounfGif[self.activeBackgroundIndex], self.WindowDimensions), (0, 0))
 
         if self.frame >= int(OptionsReader().getValue("TargetFPS"))/6:
             self.frame = 0
@@ -35,14 +37,19 @@ class StartScreen(Screen):
             self.frame += 1
 
         # Draw Application Logo
-        self.display.blit(pygame.transform.scale(self.logo, (720,70)), (180, 100))
+        self.display.blit(pygame.transform.scale(
+            self.logo, (720, 70)), (180, 100))
 
         # Draw Start Instructions
-        self.display.blit(pygame.transform.scale(self.startInstructions,(720,40)), (180,550))
+        self.display.blit(pygame.transform.scale(
+            self.startInstructions, (720, 40)), (180, 550))
 
-    def startGame():
+    def startGame(self):
         return screens.ScreenManager.ScreenManager().changeToGameScreen()
 
-    myPressedActions = {
-        pygame.K_SPACE : startGame,
-    }
+    pressedActions = {}
+
+    def definePressedActions(self):
+        self.pressedActions = {
+            pygame.K_SPACE: (self.startGame, [], {}),
+        }
