@@ -24,17 +24,24 @@ def main():
     # PyGame
     pygame.init()
     clock = pygame.time.Clock()
+
     display = pygame.display.set_mode(
         [_screenWidth, _screenHeight])  # , pygame.NOFRAME
     screen = ScreenManager().getScreen()
     screenDisplayed = screen(display)
+
     pygame.display.set_caption('SpaceSpeeders')
+    
+    mouseHold = False
 
     while True:
         inputs = {"hold": [], "pressed": [],
                     "released": [], "mousePos": ()}
 
         hold = pygame.key.get_pressed()
+        if mouseHold :
+            inputs["hold"].append(pygame.MOUSEBUTTONDOWN)
+            #print("🖱️ ↓ hold at " , pygame.mouse.get_pos())
         pressed = pygame.event.get()
 
         # Gets Pressed inputs
@@ -50,8 +57,13 @@ def main():
                 #print("Released ", pygame.key.name(event.key))
                 inputs["released"].append(event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                #print("🖱️ at " , pygame.mouse.get_pos())
+                #print("🖱️ ↓ at " , pygame.mouse.get_pos())
                 inputs["pressed"].append(pygame.MOUSEBUTTONDOWN)
+                mouseHold = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                #print("🖱️ ↑ at " , pygame.mouse.get_pos())
+                inputs["released"].append(pygame.MOUSEBUTTONDOWN)
+                mouseHold = False
 
         # Gets Holded inputs
         for key in KeyInputs:

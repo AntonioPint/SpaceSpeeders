@@ -33,7 +33,7 @@ class GameScreen(Screen):
     def execute(self, input):
         # Mouse Input
         mousePosition = input["mousePos"]
-
+        
         self.defineHoldActions()
         self.definePressedActions()
         self.defineReleasedActions()
@@ -89,13 +89,15 @@ class GameScreen(Screen):
             pygame.K_DOWN: (self.Character.moveDown, [], {}), pygame.K_s: (self.Character.moveDown, [], {}),
             pygame.K_LEFT: (self.Character.moveLeft, [], {}), pygame.K_a: (self.Character.moveLeft, [], {}),
             pygame.K_RIGHT: (self.Character.moveRight, [], {}), pygame.K_d: (self.Character.moveRight, [], {}),
+            pygame.K_SPACE: (self.Character.fire, [self.LastMousePosition], {}),
+            pygame.MOUSEBUTTONDOWN: (self.Character.fire, [self.LastMousePosition], {}),
         }
 
     def definePressedActions(self):
         self.pressedActions = {
             pygame.K_ESCAPE: (self.exitGame, [], {}),
-            pygame.K_SPACE: (self.Character.fire, [self.LastMousePosition], {}),
-            pygame.MOUSEBUTTONDOWN: (self.Character.fire, [self.LastMousePosition], {}),
+            # pygame.K_SPACE: (self.Character.fire, [self.LastMousePosition], {}),
+            # pygame.MOUSEBUTTONDOWN: (self.Character.fire, [self.LastMousePosition], {}),
         }
 
     def defineReleasedActions(self):

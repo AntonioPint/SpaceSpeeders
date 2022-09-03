@@ -36,9 +36,6 @@ class Screen(object):
                     g)[0], self.releasedActions.get(g)[1])
 
     def executeInputsAux(self,function, args):
-        try:
-            funcResult = function(*args)
-            return funcResult if funcResult is not None else None
-        except:
-            funcResult = function()
-            return funcResult if funcResult is not None else None
+        funcResult = function(*args)
+        return funcResult if funcResult is not None else None
+       
