@@ -1,10 +1,13 @@
 import sys
-from Button import Button
+
+import pygame
+from GameObject.Button import Button
 from OptionsReader import OptionsReader
+
+import screens.ScreenManager
 from screens.GameScreen import GameScreen
 from screens.Screen import Screen
-import screens.ScreenManager
-import pygame
+
 
 class PauseScreen(Screen):
     display = None
