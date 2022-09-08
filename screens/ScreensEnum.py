@@ -7,3 +7,4 @@ class ScreensEnum(Enum):
     StartScreen = StartScreen
     GameScreen = GameScreen
     PauseScreen = PauseScreen
+    

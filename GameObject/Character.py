@@ -6,7 +6,7 @@ class Character(GameObject):
     Shots = []
     CharacterWidth = 80
     CharacterHeight = 80
-    Health = 3
+    Health = 5
 
     def __init__(self, position):
         super().__init__(

@@ -1,25 +1,32 @@
 import sys
-from screens.ScreensEnum import ScreensEnum
+# from screens.ScreensEnum import ScreensEnum
 from Singleton import SingletonMeta 
-import pygame 
+from screens.StartScreen import StartScreen
+from screens.GameScreen import GameScreen
+from screens.PauseScreen import PauseScreen
+from screens.GameOverScreen import GameOverScreen
 
 class ScreenManager(metaclass=SingletonMeta):
     #Inicial Screen
-    screen = ScreensEnum.StartScreen.value
+    screen = StartScreen
 
     def getScreen(self): 
         return self.screen
     
     def changeToStartScreen(self):
-        self.screen = ScreensEnum.StartScreen.value
+        self.screen = StartScreen
         return self.getScreen()
 
     def changeToGameScreen(self):
-        self.screen = ScreensEnum.GameScreen.value
+        self.screen = GameScreen
         return self.getScreen()
 
     def changeToPauseScreen(self):
-        self.screen = ScreensEnum.PauseScreen.value
+        self.screen = PauseScreen
+        return self.getScreen()
+        
+    def changeToGameOverScreen(self):
+        self.screen = GameOverScreen
         return self.getScreen()
 
     def exitApp(self):

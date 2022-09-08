@@ -27,11 +27,7 @@ class PauseScreen(Screen):
         # Background      
         self.display.fill((0, 0, 0))
         
-        # Buttons
-        pygame.mouse.set_visible(True)
-        
         self.display.blit(self.resumeButton.surface,(self.resumeButton.x, self.resumeButton.y))
-        return None
 
 
     def backToGame(self):

@@ -22,7 +22,7 @@ class GameScreen(Screen):
     CrossHair = CrossHair()
 
     LastMousePosition = (0, 0)
-    Enemies = [Enemy(pygame.Vector2(100,300))]
+    Enemies = [Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300))]
 
     def __init__(self, display):
         super().__init__(display)
@@ -82,8 +82,11 @@ class GameScreen(Screen):
             # Verify Asteroids -> Character
             if enemy.isCollidingObject(self.Character):
                 self.Character.takeDamage()
-                print(f'Systems Critical! ({self.Character.getHealth()}/3)')
-                break
+                if self.Character.getHealth() <= 0:
+                    self.gameOver()
+
+                print(f'Systems Critical! ({self.Character.getHealth()}/5)')
+                continue
             # Verify Shots -> Asteroids
             for shot in self.Character.Shots:
                 if shot.isCollidingObject(enemy):
@@ -104,7 +107,12 @@ class GameScreen(Screen):
         return (pos[0]-self.crosshairSize[0]/2, pos[1]-self.crosshairSize[1]/2)
 
     def exitGame(self):
+        pygame.mouse.set_visible(True)
         return screens.ScreenManager.ScreenManager().changeToPauseScreen()
+
+    def gameOver(self):
+        pygame.mouse.set_visible(True)
+        return screens.ScreenManager.ScreenManager().changeToGameOverScreen()
 
     holdActions = {}
     pressedActions = {}
