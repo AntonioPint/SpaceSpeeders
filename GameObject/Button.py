@@ -25,7 +25,7 @@ class Button(object):
     def setText(self, text):
         self.text = text
 
-    def isColliding(self, pos):
+    def isCollidingPoint(self, pos):
         (x,y) = pos
         return self.rect.collidepoint(x, y)
     

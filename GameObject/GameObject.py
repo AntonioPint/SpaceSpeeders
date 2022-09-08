@@ -4,7 +4,6 @@ from turtle import Vec2D
 import pygame
 from OptionsReader import OptionsReader
 
-
 class GameObject(object):
     def __init__(
         self,
@@ -36,7 +35,6 @@ class GameObject(object):
     def move(self):
         if self.movement == pygame.Vector2(0, 0):
             return
-
         self.position += self.movement.normalize() * self.acceleration
 
     def getCenter(self):
@@ -45,11 +43,14 @@ class GameObject(object):
     def getPosition(self):
         return self.position
 
-    def areColliding(self, object1, object2):
-        return False
+    def getHitBox(self):
+        return self.getImage().get_rect(x=self.position[0], y=self.position[1])
 
-    def collidingObjects(self, gameObjectsToVerify):
-        pass
+    def isCollidingPoint(self, pos):
+        return self.getHitBox().collidepoint(pos)
+
+    def isCollidingObject(self, object):  
+        return self.getHitBox().colliderect(object.getHitBox())
 
     def getImage(self):
         return pygame.transform.scale(

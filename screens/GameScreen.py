@@ -1,4 +1,5 @@
 from functools import partial
+from GameObject.CrossHair import CrossHair
 from GameObject.Enemy import Enemy
 from OptionsReader import OptionsReader
 from GameObject.Character import Character
@@ -17,11 +18,8 @@ class GameScreen(Screen):
          int(OptionsReader().getValue("WindowHeight"))/2)
     )
 
-    # ChrossHair
-    ChrossHairImage = pygame.image.load("assets/crosshair.png")
-    ChrossHairSize = (50,50)
-    ChrossHair = pygame.transform.scale(
-        ChrossHairImage, ChrossHairSize)
+    # Crosshair
+    CrossHair = CrossHair()
 
     LastMousePosition = (0, 0)
     Enemies = [Enemy(pygame.Vector2(100,300))]
@@ -71,28 +69,42 @@ class GameScreen(Screen):
 
         # Draw Enemies
         nextEnemies = []
+
         for enemy in self.Enemies:
             enemy.move()
+
+            if enemy.isOffScreen(): 
+                return
+
             self.display.blit(enemy.getImage(), enemy.getPosition())
-            if(not enemy.isOffScreen()):
-                nextEnemies.append(enemy)
+
+            # Verify Collisions
+            # Verify Asteroids -> Character
+            if enemy.isCollidingObject(self.Character):
+                self.Character.takeDamage()
+                print(f'Systems Critical! ({self.Character.getHealth()}/3)')
+                break
+            # Verify Shots -> Asteroids
+            for shot in self.Character.Shots:
+                if shot.isCollidingObject(enemy):
+                    print("HIT!")
+                    break
+                
+            else:
+                nextEnemies.append(enemy) 
+
         self.Enemies = nextEnemies
 
-        # Verify Collisions
-        #TODO:
-
         # Draw Cursor
+        self.CrossHair.moveChrossHair(self.LastMousePosition)
         self.display.blit(
-            self.ChrossHair, self.crossHairPositionOffset(self.LastMousePosition))
+            self.CrossHair.getImage(), self.CrossHair.getPosition())
 
     def crossHairPositionOffset(self, pos):
-        return (pos[0]-self.ChrossHairSize[0]/2, pos[1]-self.ChrossHairSize[1]/2)
+        return (pos[0]-self.crosshairSize[0]/2, pos[1]-self.crosshairSize[1]/2)
 
     def exitGame(self):
         return screens.ScreenManager.ScreenManager().changeToPauseScreen()
-
-    def getLastMousePosition(self):
-        return self.LastMousePosition
 
     holdActions = {}
     pressedActions = {}

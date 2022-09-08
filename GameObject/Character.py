@@ -6,6 +6,7 @@ class Character(GameObject):
     Shots = []
     CharacterWidth = 80
     CharacterHeight = 80
+    Health = 3
 
     def __init__(self, position):
         super().__init__(
@@ -52,3 +53,9 @@ class Character(GameObject):
         shot = Shot(pygame.Vector2(self.getCenter()))
         shot.movement = pos - pygame.Vector2(self.getCenter())
         self.Shots.append(shot)
+
+    def takeDamage(self):
+        self.Health -= 1
+
+    def getHealth(self):
+        return self.Health

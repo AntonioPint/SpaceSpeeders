@@ -38,7 +38,7 @@ class PauseScreen(Screen):
         screens.ScreenManager.ScreenManager().changeToGameScreen()
 
     def checkMouseClick(self):
-        if(self.resumeButton.isColliding(self.mousePosition)):
+        if(self.resumeButton.isCollidingPoint(self.mousePosition)):
             screens.ScreenManager.ScreenManager().exitApp()
 
     pressedActions = {}

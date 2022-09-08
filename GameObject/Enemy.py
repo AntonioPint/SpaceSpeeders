@@ -23,8 +23,8 @@ class Enemy(GameObject):
 
         # If is not moving
         if self.movement == pygame.Vector2(0, 0):
-            #self.movement = pygame.Vector2(random()*self.speed -self.speed/2,random()*self.speed -self.speed/2)
-            self.movement = pygame.Vector2(-10, -10)
+            self.movement = pygame.Vector2(random()*self.acceleration -self.acceleration/2,random()*self.acceleration -self.acceleration/2)
+            #self.movement = pygame.Vector2(-10, -10)
         
         VectorMovement = self.movement.normalize() * self.acceleration
 
@@ -40,9 +40,6 @@ class Enemy(GameObject):
         if self.isOutOfBounds():
             self.position -= pygame.Vector2(VectorMovementY)
             self.movement = pygame.Vector2(self.movement.x, -self.movement.y)
-
-
-
 
         #self.position += self.movement.normalize() * self.acceleration
 
