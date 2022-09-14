@@ -4,14 +4,15 @@ from turtle import Vec2D
 import pygame
 from OptionsReader import OptionsReader
 
+
 class GameObject(object):
     def __init__(
         self,
-        width, 
-        height, 
-        position, 
-        acceleration = 1, 
-        image = pygame.image.load("assets/test.png")
+        width,
+        height,
+        position,
+        acceleration=1,
+        image=pygame.image.load("assets/test.png")
     ):
         self.width = width
         self.height = height
@@ -22,14 +23,18 @@ class GameObject(object):
         self.movement = pygame.Vector2(0, 0)
 
     def isOutOfBounds(self):
-        isOutOfBoundsX = self.position.x < 0 or (self.position + pygame.Vector2(self.width, 0)).x > int(OptionsReader().getValue("WindowWidth"))
-        isOutOfBoundsY = self.position.y < 0 or (self.position + pygame.Vector2(0, self.height)).y > int(OptionsReader().getValue("WindowHeight"))
+        isOutOfBoundsX = self.position.x < 0 or (
+            self.position + pygame.Vector2(self.width, 0)).x > int(OptionsReader().getValue("WindowWidth"))
+        isOutOfBoundsY = self.position.y < 0 or (self.position + pygame.Vector2(
+            0, self.height)).y > int(OptionsReader().getValue("WindowHeight"))
 
         return isOutOfBoundsX or isOutOfBoundsY
 
     def isOffScreen(self):
-        isOutScreenX = (self.position + pygame.Vector2(self.width, 0)).x < 0 or self.position.x > int(OptionsReader().getValue("WindowWidth"))
-        isOutScreenY = (self.position + pygame.Vector2(0, self.height)).y < 0 or self.position.y > int(OptionsReader().getValue("WindowHeight"))
+        isOutScreenX = (self.position + pygame.Vector2(self.width, 0)
+                        ).x < 0 or self.position.x > int(OptionsReader().getValue("WindowWidth"))
+        isOutScreenY = (self.position + pygame.Vector2(0, self.height)
+                        ).y < 0 or self.position.y > int(OptionsReader().getValue("WindowHeight"))
         return isOutScreenX or isOutScreenY
 
     def move(self):
@@ -38,7 +43,7 @@ class GameObject(object):
         self.position += self.movement.normalize() * self.acceleration
 
     def getCenter(self):
-        return self.position + pygame.Vector2(self.width/2, self.height /2 )
+        return self.position + pygame.Vector2(self.width/2, self.height / 2)
 
     def getPosition(self):
         return self.position
@@ -49,7 +54,7 @@ class GameObject(object):
     def isCollidingPoint(self, pos):
         return self.getHitBox().collidepoint(pos)
 
-    def isCollidingObject(self, object):  
+    def isCollidingObject(self, object):
         return self.getHitBox().colliderect(object.getHitBox())
 
     def getImage(self):
@@ -65,3 +70,4 @@ class GameObject(object):
         self.center = result.get_rect(center=(x, y))
 
         return result
+        

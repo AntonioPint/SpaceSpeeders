@@ -4,18 +4,22 @@ import pygame
 
 from GameObject.GameObject import GameObject
 
+
 class Enemy(GameObject):
     EnemyWidth = 75
     EnemyHeight = 75
+    Angle = 0
+    Image = pygame.image.load("assets/asteroid.png")
 
-    def __init__(self, position, acceleration=10):
+    def __init__(self, position, acceleration=1):
         super().__init__(
             self.EnemyWidth,
             self.EnemyHeight,
             position,
             acceleration,
-            pygame.image.load("assets/asteroid.png")
+            self.Image
         )
+        self.setCallback()
 
     def move(self):
         # Add movement random in the beginning and then every
@@ -23,9 +27,14 @@ class Enemy(GameObject):
 
         # If is not moving
         if self.movement == pygame.Vector2(0, 0):
-            self.movement = pygame.Vector2(random()*self.acceleration -self.acceleration/2,random()*self.acceleration -self.acceleration/2)
-            #self.movement = pygame.Vector2(-10, -10)
-        
+            self.movement = pygame.Vector2(random(
+            )*self.acceleration - self.acceleration/2, random()*self.acceleration - self.acceleration/2)
+
+        self.Angle += 10
+
+        if self.Angle == 360:
+            self.Angle = 0
+
         VectorMovement = self.movement.normalize() * self.acceleration
 
         VectorMovementX = (VectorMovement[0], 0)
@@ -41,7 +50,15 @@ class Enemy(GameObject):
             self.position -= pygame.Vector2(VectorMovementY)
             self.movement = pygame.Vector2(self.movement.x, -self.movement.y)
 
-        #self.position += self.movement.normalize() * self.acceleration
+    def passCallback():
+        pass
 
+    def setCallback(self, func=passCallback):
+        self.Callback = func
 
+    def whenDestroyed(self):
+        if self.Callback == None:
+            pass  
+            
+        self.Callback()
         

@@ -23,13 +23,13 @@ class GameOverScreen(Screen):
         
         return None
 
-
     def backToGame(self):
         screens.ScreenManager.ScreenManager().changeToGameScreen()
 
     def checkMouseClick(self):
-        if(self.resumeButton.isCollidingPoint(self.mousePosition)):
-            screens.ScreenManager.ScreenManager().exitApp()
+        # if(self.resumeButton.isCollidingPoint(self.mousePosition)):
+        #     screens.ScreenManager.ScreenManager().exitApp()
+        pass
 
     pressedActions = {}
 

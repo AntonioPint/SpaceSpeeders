@@ -1,3 +1,2 @@
-__pycache__
-screens/__pycache__
-GameObject/__pycache__
+# Ignoring all Python Cache
+__pycache__/

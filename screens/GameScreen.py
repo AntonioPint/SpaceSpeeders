@@ -1,34 +1,44 @@
 from functools import partial
-from GameObject.CrossHair import CrossHair
-from GameObject.Enemy import Enemy
-from OptionsReader import OptionsReader
-from GameObject.Character import Character
-from screens.Screen import Screen
-from GameObject.Shot import Shot
-import screens.ScreenManager
+from random import randrange
+
 import pygame
+from GameObject.Character import Character
+from GameObject.CrossHair import CrossHair
+from GameObject.Enemy.Enemy import Enemy
+from GameObject.Enemy.EnemyHealth import EnemyHealth
+from GameObject.Shot import Shot
+from OptionsReader import OptionsReader
+
+import screens.ScreenManager
+from screens.Screen import Screen
 
 
 class GameScreen(Screen):
     # Wallpaper
-    WallpaperImage = pygame.image.load("assets/wallpaper.png")    
+    WallpaperImage = pygame.image.load("assets/wallpaper.png")
 
-    Character = Character(
-        (int(OptionsReader().getValue("WindowWidth"))/2,
-         int(OptionsReader().getValue("WindowHeight"))/2)
-    )
+    # Points
+    Points = 0
+
+    # Heart
+    Heart = pygame.transform.scale(
+        pygame.image.load("assets/heart.png"), (50, 50))
 
     # Crosshair
     CrossHair = CrossHair()
 
     LastMousePosition = (0, 0)
-    Enemies = [Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300)),Enemy(pygame.Vector2(100,300))]
+    Enemies = []
 
     def __init__(self, display):
         super().__init__(display)
-        
+
         self.Wallpaper = pygame.transform.scale(
             self.WallpaperImage, self.WindowDimensions)
+
+        self.Character = Character(
+            tuple(ti/2 for ti in super().WindowDimensions)
+        )
 
         # CrossHair
         pygame.mouse.set_visible(False)
@@ -52,11 +62,9 @@ class GameScreen(Screen):
         nextShots = []
         for shot in self.Character.Shots:
             shot.move()
-            self.display.blit(shot.getImage(), shot.getPosition())
             if(not shot.isOffScreen()):
                 nextShots.append(shot)
-
-        self.Character.Shots = nextShots
+                self.display.blit(shot.getImage(), shot.getPosition())
 
         # Draw character
         self.Character.move()  # First move character
@@ -69,11 +77,25 @@ class GameScreen(Screen):
 
         # Draw Enemies
         nextEnemies = []
+        if self.Enemies.__len__() < self.getAmountOfEnemies():
+            r = randrange(0,20)
+            NewEnemie = None
+            if r == 0:
+                NewEnemie = EnemyHealth(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
+                NewEnemie.setCallback(self.Character.incrementHealth)
+                self.Enemies.append(NewEnemie)
+            if r == 1:
+                NewEnemie = EnemyHealth(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
+                NewEnemie.setCallback(self.Character.incrementHealth)
+                self.Enemies.append(NewEnemie)
+            else:
+                self.Enemies.append(Enemy(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel()))
 
         for enemy in self.Enemies:
             enemy.move()
+            enemy.acceleration += 0.01
 
-            if enemy.isOffScreen(): 
+            if enemy.isOffScreen():
                 return
 
             self.display.blit(enemy.getImage(), enemy.getPosition())
@@ -85,18 +107,31 @@ class GameScreen(Screen):
                 if self.Character.getHealth() <= 0:
                     self.gameOver()
 
-                print(f'Systems Critical! ({self.Character.getHealth()}/5)')
+                #print(f'Systems Critical! ({self.Character.getHealth()}/5)')
                 continue
-            # Verify Shots -> Asteroids
-            for shot in self.Character.Shots:
-                if shot.isCollidingObject(enemy):
-                    print("HIT!")
-                    break
-                
-            else:
-                nextEnemies.append(enemy) 
 
+            # Verify Shots -> Asteroids
+            for shot in nextShots:
+                if shot.isCollidingObject(enemy):
+                    self.Points += 100
+                    # print("HIT!")
+                    nextShots.remove(shot)
+                    enemy.whenDestroyed()
+                    break
+            else:
+                nextEnemies.append(enemy)
+
+        self.Character.Shots = nextShots
         self.Enemies = nextEnemies
+
+        # Draw Character Heart
+        for i in range(self.Character.getHealth()):
+            self.display.blit(self.Heart, (i * 50, 0))
+
+        # Draw Points
+        font = pygame.font.SysFont(None, 50)
+        img = font.render(f'Points: {self.Points}', True, (255, 255, 255))
+        self.display.blit(img, (0, 50))
 
         # Draw Cursor
         self.CrossHair.moveChrossHair(self.LastMousePosition)
@@ -106,6 +141,42 @@ class GameScreen(Screen):
     def crossHairPositionOffset(self, pos):
         return (pos[0]-self.crosshairSize[0]/2, pos[1]-self.crosshairSize[1]/2)
 
+    def generateCornerPosition(self, width, height):
+        #corner top=0,left=1,right=2,bottom=3
+        x = 0 
+        y = 0
+
+        match randrange(0,4):
+            case 0:
+                x = randrange(0, self.WindowDimensions[0]-width)
+                y = 0
+            case 1:
+                x = 0
+                y = randrange(0, self.WindowDimensions[1]-height)
+            case 2:
+                x = self.WindowDimensions[0]-width
+                y = randrange(0, self.WindowDimensions[1]-height)
+            case 3:
+                x = randrange(0, self.WindowDimensions[0]-width)
+                y = self.WindowDimensions[1]-height
+        
+        return (x,y)
+    
+    def getLevel(self):
+        return int(self.Points/1000) or 1
+
+    def getAmountOfEnemies(self):
+        return int(self.getLevel() * 0.7) or 1
+
+    def activateMachineGun(self):
+        # TODO:
+        self.holdActions[pygame.K_SPACE] = None
+        self.holdActions[pygame.MOUSEBUTTONDOWN] = None
+
+    def deactivateMachineGun(self):    
+        self.holdActions[pygame.K_SPACE] = None
+        self.holdActions[pygame.MOUSEBUTTONDOWN] = None
+
     def exitGame(self):
         pygame.mouse.set_visible(True)
         return screens.ScreenManager.ScreenManager().changeToPauseScreen()
@@ -113,6 +184,13 @@ class GameScreen(Screen):
     def gameOver(self):
         pygame.mouse.set_visible(True)
         return screens.ScreenManager.ScreenManager().changeToGameOverScreen()
+
+    def fire(self, mousePos):
+        # TODO: if character tem powerup então não perde pontos
+        if not self.Points == 0:
+            self.Points -= 10
+
+        self.Character.fire(mousePos)
 
     holdActions = {}
     pressedActions = {}
@@ -124,13 +202,15 @@ class GameScreen(Screen):
             pygame.K_DOWN: (self.Character.moveDown, [], {}), pygame.K_s: (self.Character.moveDown, [], {}),
             pygame.K_LEFT: (self.Character.moveLeft, [], {}), pygame.K_a: (self.Character.moveLeft, [], {}),
             pygame.K_RIGHT: (self.Character.moveRight, [], {}), pygame.K_d: (self.Character.moveRight, [], {}),
+            pygame.K_SPACE: None,
+            pygame.MOUSEBUTTONDOWN: None,
         }
 
     def definePressedActions(self):
         self.pressedActions = {
             pygame.K_ESCAPE: (self.exitGame, [], {}),
-            pygame.K_SPACE: (self.Character.fire, [self.LastMousePosition], {}),
-            pygame.MOUSEBUTTONDOWN: (self.Character.fire, [self.LastMousePosition], {}),
+            pygame.K_SPACE: (self.fire, [self.LastMousePosition], {}),
+            pygame.MOUSEBUTTONDOWN: (self.fire, [self.LastMousePosition], {}),
         }
 
     def defineReleasedActions(self):

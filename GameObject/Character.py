@@ -3,16 +3,20 @@ from GameObject.Shot import Shot
 import pygame
 
 class Character(GameObject):
+    # CONSTANTS
+    MAX_HEALTH = 5
+    
     Shots = []
     CharacterWidth = 80
     CharacterHeight = 80
-    Health = 5
+    Health = MAX_HEALTH
+    PowerUps = []
 
-    def __init__(self, position):
+    def __init__(self, center):
         super().__init__(
             self.CharacterWidth,
             self.CharacterHeight,
-            position,
+            (center[0]- self.CharacterWidth/2,center[1]- self.CharacterHeight/2),
             5,
             pygame.image.load("assets/spaceship.png")
         )       
@@ -59,3 +63,6 @@ class Character(GameObject):
 
     def getHealth(self):
         return self.Health
+
+    def incrementHealth(self):
+        self.Health += 1
