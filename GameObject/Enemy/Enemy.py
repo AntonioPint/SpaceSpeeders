@@ -50,6 +50,7 @@ class Enemy(GameObject):
             self.position -= pygame.Vector2(VectorMovementY)
             self.movement = pygame.Vector2(self.movement.x, -self.movement.y)
 
+        self.acceleration += 0.01
     def passCallback():
         pass
 
@@ -59,6 +60,5 @@ class Enemy(GameObject):
     def whenDestroyed(self):
         if self.Callback == None:
             pass  
-            
         self.Callback()
         

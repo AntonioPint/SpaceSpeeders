@@ -11,6 +11,7 @@ class Screen(object):
     holdActions = {}
     pressedActions = {}
     releasedActions = {}
+    mousePosition = (0,0) # default
 
     def __init__(self, display):
         self.display = display
@@ -35,7 +36,12 @@ class Screen(object):
                 self.executeInputsAux(self.releasedActions.get(
                     g)[0], self.releasedActions.get(g)[1])
 
+        self.mousePosition = input["mousePos"]
+        self.InternalSeconds = input["InternalSeconds"]
+
     def executeInputsAux(self,function, args):
         funcResult = function(*args)
         return funcResult if funcResult is not None else None
        
+    def getMousePosition(self):
+        return self.mousePosition 

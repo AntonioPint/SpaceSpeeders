@@ -10,4 +10,5 @@ class EnemyMachineGun(Enemy):
             position,
             acceleration
         )
+    
         

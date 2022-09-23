@@ -1,3 +1,4 @@
+import math
 from functools import partial
 from random import randrange
 
@@ -6,6 +7,8 @@ from GameObject.Character import Character
 from GameObject.CrossHair import CrossHair
 from GameObject.Enemy.Enemy import Enemy
 from GameObject.Enemy.EnemyHealth import EnemyHealth
+from GameObject.Enemy.EnemyMachineGun import EnemyMachineGun
+from GameObject.PowerUp import PowerUp, PowerUpEnum
 from GameObject.Shot import Shot
 from OptionsReader import OptionsReader
 
@@ -45,19 +48,20 @@ class GameScreen(Screen):
 
     def execute(self, input):
         # Mouse Input
-        mousePosition = input["mousePos"]
-
-        self.defineHoldActions()
-        self.definePressedActions()
-        self.defineReleasedActions()
+        mousePosition = super().getMousePosition()
+        
         self.executeInputs(input)
 
         # Walpaper
         self.display.blit(self.Wallpaper, (0, 0))
-
-        if mousePosition != ():
+        
+        if mousePosition != () and mousePosition != self.LastMousePosition:
+            self.defineHoldActions()
+            self.definePressedActions()
+            self.defineReleasedActions()
+            
             self.LastMousePosition = mousePosition
-
+        
         # Draw Shots
         nextShots = []
         for shot in self.Character.Shots:
@@ -67,6 +71,9 @@ class GameScreen(Screen):
                 self.display.blit(shot.getImage(), shot.getPosition())
 
         # Draw character
+        if self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU) != None:
+            self.activateMachineGun()
+
         self.Character.move()  # First move character
 
         self.display.blit(
@@ -78,22 +85,20 @@ class GameScreen(Screen):
         # Draw Enemies
         nextEnemies = []
         if self.Enemies.__len__() < self.getAmountOfEnemies():
-            r = randrange(0,20)
-            NewEnemie = None
-            if r == 0:
+            r = randrange(0,100)
+            NewEnemie: Enemy = Enemy(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
+            if range(0,5).__contains__(r):
                 NewEnemie = EnemyHealth(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
                 NewEnemie.setCallback(self.Character.incrementHealth)
-                self.Enemies.append(NewEnemie)
-            if r == 1:
-                NewEnemie = EnemyHealth(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
-                NewEnemie.setCallback(self.Character.incrementHealth)
-                self.Enemies.append(NewEnemie)
-            else:
-                self.Enemies.append(Enemy(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel()))
+                
+            if range(5,8).__contains__(r):
+                NewEnemie = EnemyMachineGun(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
+                NewEnemie.setCallback(self.activateMachineGun)
+                
+            self.Enemies.append(NewEnemie)
 
         for enemy in self.Enemies:
             enemy.move()
-            enemy.acceleration += 0.01
 
             if enemy.isOffScreen():
                 return
@@ -113,7 +118,8 @@ class GameScreen(Screen):
             # Verify Shots -> Asteroids
             for shot in nextShots:
                 if shot.isCollidingObject(enemy):
-                    self.Points += 100
+                    if self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU) == None:
+                        self.Points += 100
                     # print("HIT!")
                     nextShots.remove(shot)
                     enemy.whenDestroyed()
@@ -166,16 +172,25 @@ class GameScreen(Screen):
         return int(self.Points/1000) or 1
 
     def getAmountOfEnemies(self):
-        return int(self.getLevel() * 0.7) or 1
+        return int(5.4*math.log(self.getLevel()+1,10)) 
 
     def activateMachineGun(self):
-        # TODO:
-        self.holdActions[pygame.K_SPACE] = None
-        self.holdActions[pygame.MOUSEBUTTONDOWN] = None
+        if not self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU) != None:
+            self.Character.addPowerUp(PowerUp(PowerUpEnum.MACHINEGUN_PWU,5 + self.InternalSeconds))
 
-    def deactivateMachineGun(self):    
-        self.holdActions[pygame.K_SPACE] = None
-        self.holdActions[pygame.MOUSEBUTTONDOWN] = None
+        if self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU).time <= self.InternalSeconds:
+            self.deactivateMachineGun()
+
+        self.holdActions[pygame.K_SPACE] = (self.fire, [self.LastMousePosition], {})
+        self.holdActions[pygame.MOUSEBUTTONDOWN] = (self.fire, [self.LastMousePosition], {})
+
+    def deactivateMachineGun(self):   
+        machineGunPowerUp = self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU)
+        if machineGunPowerUp != None:
+            self.Character.removePowerUp(machineGunPowerUp)
+
+    def getMousePosition(self):
+        return self.LastMousePosition
 
     def exitGame(self):
         pygame.mouse.set_visible(True)
@@ -186,10 +201,9 @@ class GameScreen(Screen):
         return screens.ScreenManager.ScreenManager().changeToGameOverScreen()
 
     def fire(self, mousePos):
-        # TODO: if character tem powerup então não perde pontos
-        if not self.Points == 0:
+        # TODO: se character tem powerup então não perde pontos
+        if self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU) == None and self.Points > 0:
             self.Points -= 10
-
         self.Character.fire(mousePos)
 
     holdActions = {}
@@ -202,15 +216,15 @@ class GameScreen(Screen):
             pygame.K_DOWN: (self.Character.moveDown, [], {}), pygame.K_s: (self.Character.moveDown, [], {}),
             pygame.K_LEFT: (self.Character.moveLeft, [], {}), pygame.K_a: (self.Character.moveLeft, [], {}),
             pygame.K_RIGHT: (self.Character.moveRight, [], {}), pygame.K_d: (self.Character.moveRight, [], {}),
-            pygame.K_SPACE: None,
-            pygame.MOUSEBUTTONDOWN: None,
+            pygame.K_SPACE: (lambda:None, [],{}),
+            pygame.MOUSEBUTTONDOWN: (lambda:None, [],{}),
         }
 
     def definePressedActions(self):
         self.pressedActions = {
             pygame.K_ESCAPE: (self.exitGame, [], {}),
-            pygame.K_SPACE: (self.fire, [self.LastMousePosition], {}),
-            pygame.MOUSEBUTTONDOWN: (self.fire, [self.LastMousePosition], {}),
+            pygame.K_SPACE: (self.fire, [self.getMousePosition()], {}),
+            pygame.MOUSEBUTTONDOWN: (self.fire, [self.getMousePosition()], {})
         }
 
     def defineReleasedActions(self):

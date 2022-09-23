@@ -1,11 +1,13 @@
 from GameObject.GameObject import GameObject
+from GameObject.PowerUp import PowerUp, PowerUpEnum
 from GameObject.Shot import Shot
 import pygame
+
 
 class Character(GameObject):
     # CONSTANTS
     MAX_HEALTH = 5
-    
+
     Shots = []
     CharacterWidth = 80
     CharacterHeight = 80
@@ -16,10 +18,11 @@ class Character(GameObject):
         super().__init__(
             self.CharacterWidth,
             self.CharacterHeight,
-            (center[0]- self.CharacterWidth/2,center[1]- self.CharacterHeight/2),
+            (center[0] - self.CharacterWidth/2,
+             center[1] - self.CharacterHeight/2),
             5,
             pygame.image.load("assets/spaceship.png")
-        )       
+        )
 
     def moveUp(self):
         self.movement += pygame.Vector2(0, -1)
@@ -49,7 +52,7 @@ class Character(GameObject):
         self.position += pygame.Vector2(VectorMovementY)
         if self.isOutOfBounds():
             self. position -= pygame.Vector2(VectorMovementY)
-        
+
         # Stop  movement
         self.movement = pygame.Vector2(0, 0)
 
@@ -64,5 +67,20 @@ class Character(GameObject):
     def getHealth(self):
         return self.Health
 
+    def getPowerUps(self):
+        return self.PowerUps
+
+    def addPowerUp(self, powerUp: PowerUp, time: int = 0):
+        self.PowerUps.append(powerUp)
+
+    def getPowerUp(self, powerUp: PowerUpEnum ):
+        for pwr in self.getPowerUps():
+            if pwr.name == powerUp:
+                return pwr
+        return None 
+
+    def removePowerUp(self, powerUp: PowerUp):
+        self.PowerUps.remove(powerUp)
+        
     def incrementHealth(self):
         self.Health += 1

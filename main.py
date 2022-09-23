@@ -30,13 +30,17 @@ def main():
     screen = ScreenManager().getScreen()
     screenDisplayed = screen(display)
 
+    # Counts every second in game
+    pygame.time.set_timer(pygame.USEREVENT, 1000)  
+    InternalSeconds = 0
+
     pygame.display.set_caption('SpaceSpeeders')
     
     mouseHold = False
 
     while True:
         inputs = {"hold": [], "pressed": [],
-                    "released": [], "mousePos": ()}
+                    "released": [], "mousePos": (), "InternalSeconds": InternalSeconds}
 
         hold = pygame.key.get_pressed()
         if mouseHold :
@@ -50,6 +54,8 @@ def main():
             if event.type == pygame.QUIT:
                 #pygame.quit()
                 sys.exit()
+            elif event.type == pygame.USEREVENT:
+                InternalSeconds += 1
             elif event.type == pygame.KEYDOWN:
                 #print("Pressed ", pygame.key.name(event.key))
                 inputs["pressed"].append(event.key)
@@ -78,7 +84,7 @@ def main():
             screenDisplayed = screen(display)
 
         screenDisplayed.execute(inputs)
-        
+
         clock.tick(int(OptionsReader().getValue("TargetFPS")))
 
         if int( OptionsReader().getValue("ShowFPS")):
