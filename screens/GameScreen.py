@@ -86,14 +86,15 @@ class GameScreen(Screen):
         nextEnemies = []
         if self.Enemies.__len__() < self.getAmountOfEnemies():
             r = randrange(0,100)
-            NewEnemie: Enemy = Enemy(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
+            NewEnemie: Enemy = Enemy(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),2)
             if range(0,5).__contains__(r):
-                NewEnemie = EnemyHealth(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
+                NewEnemie = EnemyHealth(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight))
                 NewEnemie.setCallback(self.Character.incrementHealth)
-                
             if range(5,8).__contains__(r):
-                NewEnemie = EnemyMachineGun(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight),self.getLevel())
-                NewEnemie.setCallback(self.activateMachineGun)
+                # Eliminate the possibility of spawning more machinegun asteroids whit activated power
+                if Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU) == None:
+                    NewEnemie = EnemyMachineGun(self.generateCornerPosition(Enemy.EnemyWidth,Enemy.EnemyHeight))
+                    NewEnemie.setCallback(self.activateMachineGun)
                 
             self.Enemies.append(NewEnemie)
 
