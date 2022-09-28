@@ -1,4 +1,6 @@
-class OptionsReader(object):
+from Singleton import SingletonMeta
+
+class OptionsReader(metaclass=SingletonMeta):
     dictionary = {}
 
     def __init__(self):

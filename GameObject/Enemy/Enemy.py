@@ -9,6 +9,8 @@ class Enemy(GameObject):
     EnemyWidth = 75
     EnemyHeight = 75
     Angle = 0
+    Health = 1
+    AccelerationIncrement = 0.01
     Image = pygame.image.load("assets/asteroid.png")
 
     def __init__(self, position, acceleration=1):
@@ -50,15 +52,22 @@ class Enemy(GameObject):
             self.position -= pygame.Vector2(VectorMovementY)
             self.movement = pygame.Vector2(self.movement.x, -self.movement.y)
 
-        self.acceleration += 0.01
+        self.acceleration += self.AccelerationIncrement
+
     def passCallback():
         pass
 
     def setCallback(self, func=passCallback):
         self.Callback = func
 
-    def whenDestroyed(self):
-        if self.Callback == None:
-            pass  
-        self.Callback()
-        
+    def getHealth(self):
+        return self.Health
+
+    def whenHit(self):
+        self.Health -= 1 
+
+        if self.Health == 0:
+            if self.Callback == None:
+                pass  
+            self.Callback()
+
