@@ -1,4 +1,4 @@
-WindowHeight=1080
 WindowWidth=1920
+WindowHeight=1080
 TargetFPS=60
 ShowFPS=1

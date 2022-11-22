@@ -1,10 +1,10 @@
 import sys
-# from screens.ScreensEnum import ScreensEnum
+# from Screens.ScreensEnum import ScreensEnum
 from Singleton import SingletonMeta 
-from screens.StartScreen import StartScreen
-from screens.GameScreen import GameScreen
-from screens.PauseScreen import PauseScreen
-from screens.GameOverScreen import GameOverScreen
+from Screens.StartScreen import StartScreen
+from Screens.GameScreen import GameScreen
+from Screens.PauseScreen import PauseScreen
+from Screens.GameOverScreen import GameOverScreen
 
 class ScreenManager(metaclass=SingletonMeta):
     #Inicial Screen

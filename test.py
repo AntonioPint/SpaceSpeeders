@@ -1,26 +1,5 @@
-from random import randrange
+a = [1,2,[1],4,5,6,7,8,9,10,11]
 
-print(int(12999/1000))
+a[3:7] = [51,52,53,54]
 
-class Cama(object):
-    ref = "abcdef123"
-    def __init__(self) -> None:
-        pass
-
-class MyClass(object):
-    cama: None
-    idade = 2
-
-    def __init__(self) -> None:
-        self.cama = Cama()
-        
-    def __eq__(self, __o: A) -> bool:
-        return __o.name == self.abc
-
-a = []
-a.append(MyClass())
-
-print(a.__contains__(MyClass()))
-
-a.remove(MyClass())
-print(a.__contains__(MyClass()))
+print(a)

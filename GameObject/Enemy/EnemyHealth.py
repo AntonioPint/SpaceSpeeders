@@ -10,4 +10,3 @@ class EnemyHealth(Enemy):
             position,
             acceleration
         )
-        

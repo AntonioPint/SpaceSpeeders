@@ -10,8 +10,8 @@ from GameObject.Enemy.EnemyHealth import EnemyHealth
 from GameObject.Enemy.EnemyMachineGun import EnemyMachineGun
 from GameObject.PowerUp import PowerUp, PowerUpEnum
 
-import screens.ScreenManager
-from screens.Screen import Screen
+import Screens.ScreenManager
+from Screens.Screen import Screen
 
 
 class GameScreen(Screen):
@@ -209,11 +209,11 @@ class GameScreen(Screen):
 
     def exitGame(self):
         pygame.mouse.set_visible(True)
-        return screens.ScreenManager.ScreenManager().changeToPauseScreen()
+        return Screens.ScreenManager.ScreenManager().changeToPauseScreen()
 
     def gameOver(self):
         pygame.mouse.set_visible(True)
-        return screens.ScreenManager.ScreenManager().changeToGameOverScreen()
+        return Screens.ScreenManager.ScreenManager().changeToGameOverScreen()
 
     def fire(self, mousePos):
         # TODO: se character tem powerup então não perde pontos

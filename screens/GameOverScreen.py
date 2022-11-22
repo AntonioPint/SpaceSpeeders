@@ -1,7 +1,7 @@
 from OptionsReader import OptionsReader
 import pygame
-import screens.ScreenManager
-from screens.Screen import Screen
+import Screens.ScreenManager
+from Screens.Screen import Screen
 
 class GameOverScreen(Screen):
     display = None
@@ -24,11 +24,11 @@ class GameOverScreen(Screen):
         return None
 
     def backToGame(self):
-        screens.ScreenManager.ScreenManager().changeToGameScreen()
+        Screens.ScreenManager.ScreenManager().changeToGameScreen()
 
     def checkMouseClick(self):
         # if(self.resumeButton.isCollidingPoint(self.mousePosition)):
-        #     screens.ScreenManager.ScreenManager().exitApp()
+        #     Screens.ScreenManager.ScreenManager().exitApp()
         pass
 
     pressedActions = {}

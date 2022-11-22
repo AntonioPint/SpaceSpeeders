@@ -4,9 +4,9 @@ import pygame
 from GameObject.Button import Button
 from OptionsReader import OptionsReader
 
-import screens.ScreenManager
-from screens.GameScreen import GameScreen
-from screens.Screen import Screen
+import Screens.ScreenManager
+from Screens.GameScreen import GameScreen
+from Screens.Screen import Screen
 
 
 class PauseScreen(Screen):
@@ -15,7 +15,7 @@ class PauseScreen(Screen):
 
     def __init__(self, display):
         super().__init__(display)
-        self.resumeButton = Button("EXIT", (self.WindowDimensions[0]/2,self.WindowDimensions[1]*2/3),30,"black","red", screens.ScreenManager.ScreenManager().exitApp)
+        self.resumeButton = Button("EXIT", (self.WindowDimensions[0]/2,self.WindowDimensions[1]*2/3),30,"black","red", Screens.ScreenManager.ScreenManager().exitApp)
 
     def execute(self, input):
         # Mouse Input
@@ -31,11 +31,11 @@ class PauseScreen(Screen):
 
 
     def backToGame(self):
-        screens.ScreenManager.ScreenManager().changeToGameScreen()
+        Screens.ScreenManager.ScreenManager().changeToGameScreen()
 
     def checkMouseClick(self):
         if(self.resumeButton.isCollidingPoint(self.mousePosition)):
-            screens.ScreenManager.ScreenManager().exitApp()
+            Screens.ScreenManager.ScreenManager().exitApp()
 
     pressedActions = {}
 

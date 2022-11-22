@@ -3,7 +3,7 @@ from queue import Empty
 import sys
 import pygame
 from OptionsReader import OptionsReader
-from screens.ScreenManager import ScreenManager
+from Screens.ScreenManager import ScreenManager
 
 
 # ScreenVariables
@@ -87,7 +87,7 @@ def main():
 
         clock.tick(int(OptionsReader().getValue("TargetFPS")))
 
-        if int( OptionsReader().getValue("ShowFPS")):
+        if int(OptionsReader().getValue("ShowFPS")):
             fpsText = pygame.font.Font('freesansbold.ttf', 22).render(str(int(clock.get_fps())), True, (0, 255, 0), (0, 0, 0, 0))
             textRect = fpsText.get_rect()
             textRect.right = _screenWidth
