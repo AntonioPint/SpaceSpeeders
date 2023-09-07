@@ -207,13 +207,13 @@ class GameScreen(Screen):
     def getMousePosition(self):
         return self.LastMousePosition
 
-    def exitGame(self):
+    def stopGame(self):
         pygame.mouse.set_visible(True)
         return Screens.ScreenManager.ScreenManager().changeToPauseScreen()
 
     def gameOver(self):
         pygame.mouse.set_visible(True)
-        return Screens.ScreenManager.ScreenManager().changeToGameOverScreen()
+        return Screens.ScreenManager.ScreenManager().changeToStartScreen()
 
     def fire(self, mousePos):
         # TODO: se character tem powerup então não perde pontos
@@ -237,7 +237,7 @@ class GameScreen(Screen):
 
     def definePressedActions(self):
         self.pressedActions = {
-            pygame.K_ESCAPE: (self.exitGame, [], {}),
+            pygame.K_ESCAPE: (self.gameOver, [], {}),
             pygame.K_SPACE: (self.fire, [self.getMousePosition()], {}),
             pygame.MOUSEBUTTONDOWN: (self.fire, [self.getMousePosition()], {})
         }

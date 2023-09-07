@@ -53,4 +53,5 @@ class StartScreen(Screen):
     def definePressedActions(self):
         self.pressedActions = {
             pygame.K_SPACE: (self.startGame, [], {}),
+            pygame.K_ESCAPE: (pygame.exit(), [], {}),
         }

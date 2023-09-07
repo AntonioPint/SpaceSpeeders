@@ -1,6 +1,6 @@
 import sys
 # from Screens.ScreensEnum import ScreensEnum
-from Singleton import SingletonMeta 
+from Utils.Singleton import SingletonMeta 
 from Screens.StartScreen import StartScreen
 from Screens.GameScreen import GameScreen
 from Screens.PauseScreen import PauseScreen

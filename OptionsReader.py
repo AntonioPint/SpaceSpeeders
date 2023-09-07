@@ -1,4 +1,4 @@
-from Singleton import SingletonMeta
+from Utils.Singleton import SingletonMeta
 
 class OptionsReader(metaclass=SingletonMeta):
     options = {}
