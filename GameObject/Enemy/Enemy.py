@@ -6,8 +6,8 @@ from GameObject.GameObject import GameObject
 
 
 class Enemy(GameObject):
-    EnemyWidth = 75
-    EnemyHeight = 75
+    Width = 75
+    Height = 75
     Angle = 0
     Health = 1
     AccelerationIncrement = 0.01
@@ -15,8 +15,8 @@ class Enemy(GameObject):
 
     def __init__(self, position, acceleration=1):
         super().__init__(
-            self.EnemyWidth,
-            self.EnemyHeight,
+            self.Width,
+            self.Height,
             position,
             acceleration,
             self.Image

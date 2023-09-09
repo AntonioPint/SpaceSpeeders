@@ -85,22 +85,22 @@ class GameScreen(Screen):
         if self.Enemies.__len__() < self.getAmountOfEnemies():
             r = randrange(0, 100)
             NewEnemie: Enemy = Enemy(self.generateCornerPosition(
-                Enemy.EnemyWidth, Enemy.EnemyHeight), 2)
+                Enemy.Width, Enemy.Height), 2)
             if range(0, 5).__contains__(r):
                 if self.Character.getHealth() < 10:
                     NewEnemie = EnemyHealth(self.generateCornerPosition(
-                        Enemy.EnemyWidth, Enemy.EnemyHeight))
+                        Enemy.Width, Enemy.Height))
                     NewEnemie.setCallback(self.Character.incrementHealth)
             if range(5, 8).__contains__(r):
                 # Eliminate the possibility of spawning more machinegun asteroids whit activated power
                 if self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU) == None:
                     NewEnemie = EnemyMachineGun(self.generateCornerPosition(
-                        Enemy.EnemyWidth, Enemy.EnemyHeight))
+                        Enemy.Width, Enemy.Height))
                     NewEnemie.setCallback(self.activateMachineGun)
-            if range(8, 10).__contains__(r):
+            if range(8, 100).__contains__(r):
                 NewEnemie = EnemyBiggerAsteroid((self.generateCornerPosition(
-                        EnemyBiggerAsteroid.EnemyWidth, EnemyBiggerAsteroid.EnemyHeight)))    
-                #NewEnemie.setCallback()
+                        EnemyBiggerAsteroid.Width, EnemyBiggerAsteroid.Height)))    
+                NewEnemie.setCallback(self.whenBigAsteroidDestroyed)
 
             self.Enemies.append(NewEnemie)
 
@@ -126,7 +126,6 @@ class GameScreen(Screen):
             for shot in nextShots:
                 if shot.isCollidingObject(enemy):
                     
-                    # print("HIT!")
                     nextShots.remove(shot)
                     enemy.whenHit()
                     if enemy.getHealth() > 0:
@@ -184,6 +183,9 @@ class GameScreen(Screen):
 
     def getAmountOfEnemies(self):
         return int(5.4*math.log(self.getLevel()+1, 10))
+
+    def whenBigAsteroidDestroyed(self):
+        self.Points += EnemyBiggerAsteroid.EXTRA_POINTS
 
     def activateMachineGun(self):
         if not self.Character.getPowerUp(PowerUpEnum.MACHINEGUN_PWU) != None:

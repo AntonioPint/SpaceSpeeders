@@ -22,6 +22,11 @@ class GameObject(object):
         self.center = image.get_rect(center=position)
         self.movement = pygame.Vector2(0, 0)
 
+        # Additional image properties TODO:
+        # self.additional_image = None
+        # self.additional_image_corner = "top-left" 
+
+
     def isOutOfBounds(self):
         isOutOfBoundsX = self.position.x < 0 or (
             self.position + pygame.Vector2(self.width, 0)).x > int(OptionsReader().getValue("WindowWidth"))
@@ -60,6 +65,9 @@ class GameObject(object):
     def getImage(self):
         return pygame.transform.scale(
             self.image, (self.width, self.height))
+    
+    def setImage(self, image: pygame.Surface):
+        self.image = image
 
     def getObjectPointingToPosition(self, targetPosition):
         (x, y) = self.getCenter()
@@ -70,4 +78,46 @@ class GameObject(object):
         self.center = result.get_rect(center=(x, y))
 
         return result
-        
+    
+    # TODO:    
+    # def addAdditionalImage(self, image: pygame.Surface, position="top-left"):
+
+    #     self.additional_image = image
+    #     self.additional_image_position = position
+    # TODO:
+    # def getCombinedImage(self):
+        combined_image = self.getImage().copy()
+
+        if self.additional_image:
+            if self.additional_image_position == "top-left":
+                x = 0
+                y = 0
+            elif self.additional_image_position == "top-right":
+                x = self.width - self.additional_image.get_width()
+                y = 0
+            elif self.additional_image_position == "bottom-left":
+                x = 0
+                y = self.height - self.additional_image.get_height()
+            elif self.additional_image_position == "bottom-right":
+                x = self.width - self.additional_image.get_width()
+                y = self.height - self.additional_image.get_height()
+            elif self.additional_image_position == "top-center":
+                x = (self.width - self.additional_image.get_width()) // 2
+                y = 0
+            elif self.additional_image_position == "left-center":
+                x = 0
+                y = (self.height - self.additional_image.get_height()) // 2
+            elif self.additional_image_position == "right-center":
+                x = self.width - self.additional_image.get_width()
+                y = (self.height - self.additional_image.get_height()) // 2
+            elif self.additional_image_position == "bottom-center":
+                x = (self.width - self.additional_image.get_width()) // 2
+                y = self.height - self.additional_image.get_height()
+            elif self.additional_image_position == "center":
+                x = (self.width - self.additional_image.get_width()) // 2
+                y = (self.height - self.additional_image.get_height()) // 2
+
+            print(self.additional_image)
+            combined_image.blit(self.additional_image(), (x, y))
+
+        return combined_image
