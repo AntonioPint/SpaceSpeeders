@@ -97,7 +97,7 @@ class GameScreen(Screen):
                     NewEnemie = EnemyMachineGun(self.generateCornerPosition(
                         Enemy.Width, Enemy.Height))
                     NewEnemie.setCallback(self.activateMachineGun)
-            if range(8, 100).__contains__(r):
+            if range(8, 13).__contains__(r):
                 NewEnemie = EnemyBiggerAsteroid((self.generateCornerPosition(
                         EnemyBiggerAsteroid.Width, EnemyBiggerAsteroid.Height)))    
                 NewEnemie.setCallback(self.whenBigAsteroidDestroyed)
